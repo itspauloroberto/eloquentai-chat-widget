@@ -17,6 +17,6 @@ export default defineConfig({
     };
   },
   loader: {
-    ".css": "copy"
+    ".css": "text"
   }
 });
