@@ -4,7 +4,8 @@ A modern, customizable React chat widget component with TypeScript support, them
 
 ## Features
 
-- 🚀 **Modern** - Built with React 18+ and TypeScript
+- 🚀 **Compatible** - Compatible with React 16.8.0 or higher
+- 📝 **Type Safe** - Built with TypeScript for strong typing
 - 🎨 **Themeable** - Customizable colors and styling
 - 📱 **Responsiveness** - Works on desktop and mobile
 - 💾 **Persistency** - Optional localStorage persist for message history
