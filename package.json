@@ -1,13 +1,15 @@
 {
-  "name": "eloquentai-chat-widget",
+  "name": "@itspauloroberto/eloquentai-chat-widget",
   "version": "1.0.0",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/itspauloroberto/eloquentai-chat-widget.git"
+    "url": "git+https://github.com/itspauloroberto/eloquentai-chat-widget.git"
   },
   "exports": {
     ".": {
@@ -22,7 +24,12 @@
     "test:standalone": "open test.html",
     "check": "tsc --noEmit"
   },
-  "keywords": ["react", "chat", "widget", "eloquentai"],
+  "keywords": [
+    "react",
+    "chat",
+    "widget",
+    "eloquentai"
+  ],
   "author": "Paulo Roberto Rosa",
   "license": "MIT",
   "description": "Embeddable chat widget component for React or plain JS apps.",
