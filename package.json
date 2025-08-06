@@ -1,0 +1,27 @@
+{
+  "name": "eloquentai-chat-widget",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --minify",
+    "dev": "vite",
+    "test:standalone": "open test.html",
+    "check": "tsc --noEmit"
+  },
+  "keywords": ["react", "chat", "widget", "eloquentai"],
+  "author": "itspauloroberto",
+  "license": "ISC",
+  "description": "Embeddable chat widget component for React or plain JS apps.",
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.0.6"
+  }
+}
