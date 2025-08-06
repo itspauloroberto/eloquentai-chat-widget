@@ -1,7 +1,7 @@
 {
   "name": "eloquentai-chat-widget",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": ["dist"],
@@ -17,7 +17,7 @@
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --minify",
+    "build": "tsup",
     "dev": "vite",
     "test:standalone": "open test.html",
     "check": "tsc --noEmit"
@@ -31,8 +31,8 @@
     "react-dom": ">=16.8.0"
   },
   "devDependencies": {
-    "@types/react": "^16.8.0",
-    "@types/react-dom": "^16.8.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^4.7.0",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
