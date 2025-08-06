@@ -2,7 +2,12 @@ import React from "react";
 import { BubbleButton } from "./BubbleButton";
 import { Panel } from "./Panel";
 import type { ChatWidgetProps } from "./types";
-import "./styles.css";
+import styles from "./styles.css";
+import { injectStyles } from "./utils/injectStyles";
+
+// Inject CSS on module load
+injectStyles(styles);
+// import "./styles.css";
 import { ChatProvider } from "./context/ChatContext";
 
 // Internal component that uses the context

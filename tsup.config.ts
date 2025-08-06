@@ -17,6 +17,16 @@ export default defineConfig({
     };
   },
   loader: {
-    ".css": "text"
+    ".css": "text" // Load CSS as text so its compatible with older Node.js versions
+  },
+  esbuildOptions(options) {
+    // Ensure React is treated as an external dependency
+    options.external = [...(options.external || []), "react", "react-dom"];
+    // Remove unused imports to reduce bundle size
+    options.treeShaking = true;
+    // Enable minification for production builds
+    options.minify = true;
+    // Set the target to modern browsers
+    options.target = "es2020";
   }
 });
