@@ -1,22 +1,295 @@
-.eloquent-chat { position: fixed; bottom: 16px; right: 16px; z-index: 2147483647; font-family: system-ui, sans-serif; }
-.eloquent-chat__bubble { width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,.15); }
-.eloquent-chat__panel { width: 360px; max-height: 70vh; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 12px 24px rgba(0,0,0,.2); display: flex; flex-direction: column; }
-.eloquent-chat__header { display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid #eee; }
-.eloquent-chat__status.online { color: #0a0; }
-.eloquent-chat__status.offline { color: #a00; }
-.eloquent-chat__banner { background:#fff6e5; color:#a15b00; padding:8px 12px; border-bottom:1px solid #f0d9a8; font-size: 13px; }
-.eloquent-chat__messages { padding:12px; overflow:auto; flex:1; }
-.eloquent-chat__msg { margin:6px 0; padding:8px 12px; border-radius: 10px; max-width: 80%; }
-.eloquent-chat__msg.user { background:#e6f3ff; align-self: flex-end; }
-.eloquent-chat__msg.assistant { background:#f5f5f5; align-self: flex-start; }
-.eloquent-chat__input { display:flex; gap:8px; padding:12px; border-top:1px solid #eee; }
-.eloquent-chat__input input { flex:1; padding:8px 10px; border:1px solid #ddd; border-radius: 8px; }
-.eloquent-chat__input button { padding:8px 12px; border:none; border-radius:8px; background:#111; color:#fff; cursor:pointer; }
-.eloquent-chat__input button:disabled { background:#ccc; cursor:not-allowed; }
-.eloquent-chat__input button:hover:not(:disabled) { background:#333; }
-.eloquent-chat__input button:active:not(:disabled) { background:#000; }
-.eloquent-chat__input button:focus { outline:none; box-shadow:0 0 0 2px rgba(0, 123, 255, 0.5); }
-.eloquent-chat__input button:disabled:focus { box-shadow:none; }
-.eloquent-chat__input button:disabled:hover { background:#ccc; }
-.eloquent-chat__input button:disabled:active { background:#ccc; }
-.eloquent-chat__input button:disabled:focus { outline:none; }
+/* Eloquent AI Chat Widget Styles */
+.eloquent-chat {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 2147483647;
+  font-family: system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}
+.eloquent-chat__intro {
+  margin-top: 20px;
+  display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.eloquent-chat__intro h5 {
+  margin: 10px 0;
+  color: #333;
+}
+.eloquent-chat__bubble {
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  margin-top: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  color: #fff;
+  padding: 6px;
+}
+.eloquent-chat__bubble-close {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 50px;
+    flex-direction: column;
+    height: 36px;
+}
+.eloquent-chat__bubble-logo {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: absolute;
+  inset: 0;
+}
+.eloquent-chat__bubble:hover {
+  transform: scale(1.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+.eloquent-chat__panel {
+  width: 360px;
+  min-height: 483px;
+  max-height: 85vh;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.eloquent-chat__panel.panel-closed {
+  width: 0;
+  max-height: 0;
+  min-height: 0;
+}
+
+.eloquent-chat__panel.panel-closed:not(.block-animation) {
+  animation: 
+    shrinkPanelWidth 0.6s cubic-bezier(0.29, 1, 0.32, 0.94) forwards,
+    shrinkPanelHeight 0.6s cubic-bezier(0.17, 0.9, 0.26, 0.97) forwards;
+}
+
+.eloquent-chat__panel.panel-open:not(.block-animation) {
+  animation: 
+    growPanelWidth 0.5s cubic-bezier(0.29, 1, 0.32, 0.94) forwards,
+    growPanelHeight 0.6s cubic-bezier(0.17, 0.9, 0.26, 0.97) forwards;
+}
+.eloquent-chat__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 13px;
+  border-bottom: 1px solid #eee;
+}
+.eloquent-chat__header h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+.eloquent-chat__header small {
+  margin: 0;
+  font-size: 13px;
+}
+.eloquent-chat__header img {
+  border-radius: 100%;
+  object-fit: cover;
+  width: 32px;
+  height: 32px;
+}
+.eloquent-chat__status.online {
+  color: #0a0;
+}
+.eloquent-chat__status.offline {
+  color: #a00;
+}
+.eloquent-chat__banner {
+  background: #fff6e5;
+  color: #a15b00;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0d9a8;
+  font-size: 13px;
+}
+.eloquent-chat__messages {
+  padding: 12px;
+  overflow: auto;
+  flex: 1;
+  min-height: 200px;
+}
+.eloquent-chat__messages-placeholder {
+  flex: 1;
+  min-height: 200px;
+}
+.eloquent-chat__msg {
+  margin: 6px 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  max-width: 80%;
+  opacity: 0;
+  animation: fadeInMessage 0.4s ease-out forwards;
+}
+
+.eloquent-chat__msg.assistant {
+  background: #f5f5f5;
+  align-self: flex-start;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: 
+    fadeInMessage 0.4s ease-out forwards,
+    typewriter 2.5s steps(60, end) 0.4s forwards;
+}
+
+.eloquent-chat__msg.assistant.typing-complete {
+  white-space: normal;
+  border-right: none;
+  animation: fadeInMessage 0.4s ease-out forwards;
+}
+
+@keyframes fadeInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typewriter {
+  from {
+    width: 0ch;
+  }
+  to {
+    width: 10ch;
+  }
+}
+.eloquent-chat__msg.user {
+  background: #e6f3ff;
+  align-self: flex-end;
+}
+.eloquent-chat__input {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid #eee;
+}
+.eloquent-chat__input form {
+  display: flex;
+  gap: 8px;
+  padding: 8px 7px 8px 13px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  min-height: 25px;
+  width: 100%;
+}
+.eloquent-chat__input input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+  color: #000;
+}
+.eloquent-chat__input input::placeholder {
+  color: #999;
+}
+.eloquent-chat__input input:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: inherit;
+  -webkit-box-shadow: none;
+}
+.eloquent-chat__input button {
+  transition: all 0.3s ease-in-out;
+  padding: 7px 12px;
+  border: none;
+  border-radius: 100%;
+  background: var(--theme-primary, #111);
+  color: #fff;
+  cursor: pointer;
+}
+.eloquent-chat__input button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+.eloquent-chat__input button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--theme-primary, #111) 80%, black);
+  padding: 8px 13px;
+}
+.eloquent-chat__input button:active:not(:disabled) {
+  background: color-mix(in srgb, var(--theme-primary, #111) 60%, black);
+}
+.eloquent-chat__input button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+}
+.eloquent-chat__input button:disabled:focus {
+  box-shadow: none;
+}
+.eloquent-chat__input button:disabled:hover {
+  background: #ccc;
+}
+.eloquent-chat__input button:disabled:active {
+  background: #ccc;
+}
+.eloquent-chat__input button:disabled:focus {
+  outline: none;
+}
+
+/* CSS Effects */
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+@keyframes growPanelWidth {
+  from {
+    width: 0;
+  }
+  to {
+    width: 360px;
+  }
+}
+
+@keyframes growPanelHeight {
+  from {
+    max-height: 0;
+    min-height: 0;
+  }
+  to {
+    max-height: 85vh;
+    min-height: 483px;
+  }
+}
+
+@keyframes shrinkPanelHeight {
+  from {
+    max-height: 85vh;
+    min-height: 483px;
+  }
+  to {
+    max-height: 0;
+    min-height: 0;
+  }
+}
+
+@keyframes shrinkPanelWidth {
+  from {
+    width: 360px;
+  }
+  to {
+    width: 0;
+  }
+}

@@ -11,13 +11,13 @@ export type ChatWidgetProps = {
   maintenance?: boolean;
   online?: boolean;
   theme?: Theme;
-  initialOpen?: boolean;
+  initialOpen?: boolean | null;
   persist?: boolean; // localStorage
   userId?: string;   // mock identity
   
-  // External control overrides (hybrid approach)
+  // External control overrides
   messages?: Message[];
-  onMessagesChange?: (messages: Message[]) => void;
+  handleSetMessage?: React.Dispatch<React.SetStateAction<Message[]>>;
   onSendMessage?: (text: string) => Promise<void>;
   onLoadMessages?: () => Message[];
   onSaveMessages?: (messages: Message[]) => void;
