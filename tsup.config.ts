@@ -17,7 +17,10 @@ export default defineConfig({
     };
   },
   loader: {
-    ".css": "text" // Load CSS as text so its compatible with older Node.js versions
+    ".css": "text", // Load CSS as text so its compatible with older Node.js versions
+    ".png": "base64",
+    ".jpg": "base64",
+    ".svg": "text"
   },
   esbuildOptions(options) {
     // Ensure React is treated as an external dependency
