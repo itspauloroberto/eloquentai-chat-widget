@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useChatWidget } from "./context/ChatContext";
 
 export const MessageList: React.FC = () => {
-  const { messages } = useChatWidget();
+  const { messages, theme } = useChatWidget();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [completedTyping, setCompletedTyping] = useState<Set<string>>(
     new Set()
@@ -21,7 +21,14 @@ export const MessageList: React.FC = () => {
   };
 
   return (
-    <div className="eloquent-chat__messages" role="log" aria-live="polite">
+    <div
+      className="eloquent-chat__messages"
+      role="log"
+      aria-live="polite"
+      style={
+        { "--theme-primary": theme?.primary || "#111" } as React.CSSProperties
+      }
+    >
       {messages.map((msg) => (
         <div
           key={msg.id}

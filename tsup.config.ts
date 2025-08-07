@@ -18,8 +18,9 @@ export default defineConfig({
   },
   loader: {
     ".css": "text", // Load CSS as text so its compatible with older Node.js versions
-    ".png": "base64",
-    ".jpg": "base64",
+    ".png": "dataurl",
+    ".jpg": "dataurl", 
+    ".jpeg": "dataurl",
     ".svg": "text"
   },
   esbuildOptions(options) {

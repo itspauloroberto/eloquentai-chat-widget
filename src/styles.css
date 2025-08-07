@@ -15,6 +15,9 @@
     flex-direction: column;
     align-items: center;
 }
+.eloquent-chat__intro.fade-out {
+  animation: shrinkPanelHeight 0.5s forwards;
+}
 .eloquent-chat__intro h5 {
   margin: 10px 0;
   color: #333;
@@ -52,7 +55,7 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 .eloquent-chat__panel {
-  width: 360px;
+  width: 460px;
   min-height: 483px;
   max-height: 85vh;
   background: #fff;
@@ -118,6 +121,9 @@
   font-size: 13px;
 }
 .eloquent-chat__messages {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: 12px;
   overflow: auto;
   flex: 1;
@@ -137,13 +143,42 @@
 }
 
 .eloquent-chat__msg.assistant {
-  background: #f5f5f5;
+  background: #eaeaea;
+  color: #111;
   align-self: flex-start;
-  overflow: hidden;
   white-space: nowrap;
+  position: relative;
+  margin-left: 40px;
   animation: 
     fadeInMessage 0.4s ease-out forwards,
     typewriter 2.5s steps(60, end) 0.4s forwards;
+}
+
+.eloquent-chat__msg.assistant::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 75%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 11px 11px 2px 0;
+  border-color: transparent #eaeaea transparent transparent;
+}
+
+.eloquent-chat__messages :nth-last-child(2)::after {
+  content: '';
+  position: absolute;
+  left: -43px;
+  bottom: -15px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  background-image: url('./assets/eloquent_ai_logo.jpeg');
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
 }
 
 .eloquent-chat__msg.assistant.typing-complete {
@@ -172,8 +207,23 @@
   }
 }
 .eloquent-chat__msg.user {
-  background: #e6f3ff;
+  background: var(--theme-primary, #111);
+  color: #fff;
   align-self: flex-end;
+  position: relative;
+}
+
+.eloquent-chat__msg.user::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 68%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 11px 0 11px 11px;
+  border-color: transparent transparent transparent var(--theme-primary, #111);
 }
 .eloquent-chat__input {
   display: flex;
@@ -259,7 +309,7 @@
     width: 0;
   }
   to {
-    width: 360px;
+    width: 460px;
   }
 }
 
@@ -287,7 +337,7 @@
 
 @keyframes shrinkPanelWidth {
   from {
-    width: 360px;
+    width: 460px;
   }
   to {
     width: 0;
