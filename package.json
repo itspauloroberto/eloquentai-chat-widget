@@ -22,7 +22,7 @@
     "build": "tsup",
     "dev": "vite",
     "test:standalone": "open test.html",
-    "check": "tsc --noEmit"
+    "type-check": "tsc --noEmit"
   },
   "keywords": [
     "react",
@@ -41,6 +41,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^4.7.0",
+    "prettier": "^3.6.2",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
     "vite": "^7.0.6"
