@@ -1,4 +1,4 @@
-export type Message = { id: string; role: "user" | "assistant"; text: string; ts: number };
+export type Message = { id: string; role: "user" | "assistant" | "error"; text: string; ts: number };
 
 export type Theme = {
   primary?: string;
@@ -14,6 +14,7 @@ export type ChatWidgetProps = {
   initialOpen?: boolean | null;
   persist?: boolean; // localStorage
   userId?: string;   // mock identity
+  askLLM?: (message: string) => Promise<string>; // Custom LLM function
   
   // External control overrides
   messages?: Message[];

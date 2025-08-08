@@ -31,6 +31,7 @@ export const EloquentChatWidget: React.FC<ChatWidgetProps> = ({
   initialOpen = null,
   persist = true,
   userId,
+  askLLM,
   // External control props
   messages,
   handleSetMessage,
@@ -46,6 +47,7 @@ export const EloquentChatWidget: React.FC<ChatWidgetProps> = ({
       persist={persist}
       maintenance={maintenance}
       online={online}
+      askLLM={askLLM}
       externalMessages={messages}
       externalSetMessages={handleSetMessage}
       externalLoadMessages={onLoadMessages}

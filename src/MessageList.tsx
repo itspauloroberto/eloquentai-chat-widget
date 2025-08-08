@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useChatWidget } from "./context/ChatContext";
+import eloquentAILogo from "./assets/eloquent_ai_logo.jpeg";
 
 export const MessageList: React.FC = () => {
   const { messages, theme } = useChatWidget();
@@ -26,7 +27,10 @@ export const MessageList: React.FC = () => {
       role="log"
       aria-live="polite"
       style={
-        { "--theme-primary": theme?.primary || "#111" } as React.CSSProperties
+        {
+          "--theme-primary": theme?.primary || "#111",
+          "--logo-url": `url(${eloquentAILogo})`,
+        } as React.CSSProperties
       }
     >
       {messages.map((msg) => (

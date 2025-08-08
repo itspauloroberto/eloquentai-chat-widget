@@ -52,6 +52,7 @@ interface ChatProviderProps {
   persist?: boolean;
   maintenance?: boolean;
   online?: boolean;
+  askLLM?: (message: string) => Promise<string>; // Custom LLM function
 
   // External control overrides (hybrid approach)
   externalMessages?: Message[];
@@ -73,6 +74,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
   persist: initialPersist = true,
   maintenance = false,
   online = true,
+  askLLM: customAskLLM,
   // External overrides
   externalMessages,
   externalSetMessages,
@@ -152,7 +154,12 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
       setIsSending(true);
 
       try {
-        const reply = isOnline ? await askLLM(text) : SYSTEM_OFFLINE_MESSAGE;
+        // Use custom askLLM if provided, otherwise use the mock
+        const llmFunction = customAskLLM || askLLM;
+        const reply = isOnline
+          ? await llmFunction(text)
+          : SYSTEM_OFFLINE_MESSAGE;
+
         const botMsg: Message = {
           id: crypto.randomUUID(),
           role: "assistant",
@@ -164,11 +171,21 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
         setMessages((prev) => [...prev, botMsg]);
       } catch (error) {
         console.error("Error sending message:", error);
+
+        // Add error message with "error" role
+        const errorMsg: Message = {
+          id: crypto.randomUUID(),
+          role: "error",
+          text: "Something went wrong when asking the LLM. Please try again.",
+          ts: Date.now(),
+        };
+
+        setMessages((prev) => [...prev, errorMsg]);
       } finally {
         setIsSending(false);
       }
     },
-    [isMaintenanceMode, isSending, isOnline, setMessages]
+    [isMaintenanceMode, isSending, isOnline, customAskLLM, setMessages]
   );
 
   // Context value

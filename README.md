@@ -2,6 +2,37 @@
 
 A beautiful, simple, compatible and very flexible React chat widget component with TypeScript support, theme customization, possibility to work with any LLM of your choose and haves a smart context-based self state management.
 
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+  - [Basic Usage (with Mock LLM)](#basic-usage-with-mock-llm)
+  - [With Custom LLM](#with-custom-llm)
+- [Development Setup](#development-setup)
+  - [Prerequisites](#prerequisites)
+  - [Clone and Install](#clone-and-install)
+  - [Development Commands](#development-commands)
+  - [Development Workflow](#development-workflow)
+- [Testing the Component](#testing-the-component)
+  - [Interactive Demo](#interactive-demo)
+  - [Theme Testing](#theme-testing)
+- [Package Publishing](#package-publishing)
+  - [Local Testing](#local-testing)
+  - [Publishing to npm](#publishing-to-npm)
+  - [Pre-Publish Checklist](#pre-publish-checklist)
+- [API Reference](#api-reference)
+  - [Props](#props)
+  - [Custom LLM Integration](#custom-llm-integration)
+  - [Theme Object](#theme-object)
+  - [Message Object](#message-object)
+  - [Context-Based State Management](#context-based-state-management)
+- [Architecture / Technical Decisions](#architecture--technical-decisions)
+- [What I would have done if I had more time?](#what-i-would-have-done-if-i-had-more-time)
+- [What could be done to scale this to enterprise-level?](#what-could-be-done-to-scale-this-to-a-enterprise-level-widget)
+- [Contributing Guide](#contributing-guide)
+- [Support](#support)
+
 ## Features
 
 - 🚀 **High Compatibility** - Compatible with React 16.8.0 or higher and even supports older node.js versions require() imports, test yourself: ```node -p "require('./dist/index.cjs')"```
@@ -21,6 +52,8 @@ npm install itspauloroberto@eloquentai-chat-widget
 
 ## Quick Start
 
+### Basic Usage (with Mock LLM)
+
 ```tsx
 import React from 'react';
 import { EloquentChatWidget } from 'itspauloroberto@eloquentai-chat-widget';
@@ -36,6 +69,38 @@ function App() {
           primary: "#007bff",
           accent: "#28a745"
         }}
+      />
+    </div>
+  );
+}
+```
+
+### With Custom LLM
+
+```tsx
+import React from 'react';
+import { EloquentChatWidget } from 'itspauloroberto@eloquentai-chat-widget';
+
+function App() {
+  const handleAskLLM = async (message: string) => {
+    // Call your backend API endpoint (never expose API keys in frontend!)
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      body: JSON.stringify({ message }),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+    const data = await response.json();
+    return data.response;
+  };
+
+  return (
+    <div>
+      <h1>My App with Custom LLM</h1>
+      <EloquentChatWidget 
+        projectId="my-project"
+        askLLM={handleAskLLM}
+        theme={{ primary: "#007bff" }}
       />
     </div>
   );
@@ -193,6 +258,7 @@ interface ChatWidgetProps {
   persist?: boolean;           // Optional: Save messages to localStorage (default: true)
   maintenance?: boolean;       // Optional: Show maintenance mode (default: false)
   online?: boolean;           // Optional: Online status (default: true)
+  askLLM?: (message: string) => Promise<string>; // Optional: Custom LLM function
   
   // Advanced: External control overrides
   messages?: Message[];
@@ -201,6 +267,316 @@ interface ChatWidgetProps {
   onLoadMessages?: () => Message[];
   onSaveMessages?: (messages: Message[]) => void;
 }
+```
+
+### Custom LLM Integration
+
+The `askLLM` prop allows you to integrate any LLM provider of your choice. If not provided, the widget uses a built-in mock LLM for demonstration purposes.
+
+**⚠️ Security Important:** Never include API keys in client-side code. Always call your LLM APIs through your own backend server to keep credentials secure.
+
+#### Basic Usage with OpenAI (via your backend)
+
+**Frontend (React component):**
+```tsx
+import { EloquentChatWidget } from 'itspauloroberto@eloquentai-chat-widget';
+
+function App() {
+  const handleAskLLM = async (message: string): Promise<string> => {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to get response');
+    }
+    
+    const data = await response.json();
+    return data.response;
+  };
+
+  return (
+    <EloquentChatWidget 
+      projectId="my-project"
+      askLLM={handleAskLLM}
+      theme={{ primary: "#007bff" }}
+    />
+  );
+}
+```
+
+**Backend (Node.js/Express example):**
+```javascript
+// server.js
+const express = require('express');
+const OpenAI = require('openai');
+
+const app = express();
+app.use(express.json());
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY // Keep this on server side!
+});
+
+app.post('/api/chat', async (req, res) => {
+  try {
+    const { message } = req.body;
+    
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: message }],
+      max_tokens: 500
+    });
+    
+    res.json({ 
+      response: completion.choices[0].message.content 
+    });
+  } catch (error) {
+    console.error('OpenAI Error:', error);
+    res.status(500).json({ error: 'Failed to get AI response' });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+```
+
+#### Usage with Anthropic Claude (via your backend)
+
+**Frontend:**
+```tsx
+const handleClaudeAskLLM = async (message: string): Promise<string> => {
+  const response = await fetch('/api/claude-chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message })
+  });
+  
+  const data = await response.json();
+  return data.response;
+};
+
+<EloquentChatWidget 
+  projectId="claude-chat"
+  askLLM={handleClaudeAskLLM}
+/>
+```
+
+**Backend (Node.js/Express with Anthropic):**
+```javascript
+// server.js
+const express = require('express');
+const Anthropic = require('@anthropic-ai/sdk');
+
+const app = express();
+app.use(express.json());
+
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY // Keep this on server side!
+});
+
+app.post('/api/claude-chat', async (req, res) => {
+  try {
+    const { message } = req.body;
+    
+    const response = await anthropic.messages.create({
+      model: 'claude-3-sonnet-20240229',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: message }]
+    });
+    
+    res.json({ 
+      response: response.content[0].text 
+    });
+  } catch (error) {
+    console.error('Anthropic Error:', error);
+    res.status(500).json({ error: 'Failed to get AI response' });
+  }
+});
+
+app.listen(3000);
+```
+
+#### Usage with Custom/Local LLM API
+
+**Frontend:**
+```tsx
+const handleCustomLLM = async (message: string): Promise<string> => {
+  try {
+    const response = await fetch('/api/my-custom-llm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.response;
+  } catch (error) {
+    // This will trigger the error message in the chat
+    throw new Error('Failed to get response from LLM');
+  }
+};
+
+<EloquentChatWidget 
+  projectId="custom-llm-chat"
+  askLLM={handleCustomLLM}
+/>
+```
+
+**Backend (Node.js with custom LLM):**
+```javascript
+// server.js - Example with Hugging Face or local model
+const express = require('express');
+
+const app = express();
+app.use(express.json());
+
+app.post('/api/my-custom-llm', async (req, res) => {
+  try {
+    const { message } = req.body;
+    
+    // Example: Call to Hugging Face API
+    const response = await fetch('https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.HUGGING_FACE_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        inputs: message,
+        parameters: {
+          max_length: 500,
+          temperature: 0.7
+        }
+      })
+    });
+    
+    const data = await response.json();
+    
+    res.json({ 
+      response: data.generated_text || data[0]?.generated_text || 'No response'
+    });
+  } catch (error) {
+    console.error('Custom LLM Error:', error);
+    res.status(500).json({ error: 'Failed to get AI response' });
+  }
+});
+
+app.listen(3000);
+```
+
+#### Next.js API Routes Example
+
+**Frontend (same as above):**
+```tsx
+const handleAskLLM = async (message: string): Promise<string> => {
+  const response = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message })
+  });
+  
+  const data = await response.json();
+  return data.response;
+};
+```
+
+**Backend (pages/api/chat.js or app/api/chat/route.js):**
+```javascript
+// pages/api/chat.js (Pages Router)
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { message } = req.body;
+    
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: message }],
+    });
+    
+    res.json({ response: completion.choices[0].message.content });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Failed to get AI response' });
+  }
+}
+
+// app/api/chat/route.js (App Router)
+import OpenAI from 'openai';
+import { NextResponse } from 'next/server';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+export async function POST(request) {
+  try {
+    const { message } = await request.json();
+    
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: message }],
+    });
+    
+    return NextResponse.json({ 
+      response: completion.choices[0].message.content 
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    return NextResponse.json(
+      { error: 'Failed to get AI response' }, 
+      { status: 500 }
+    );
+  }
+}
+```
+
+#### Error Handling
+
+When the `askLLM` function throws an error or the promise rejects, the widget automatically displays an error message with a red background saying "Something went wrong when asking the LLM. Please try again."
+
+```tsx
+const handleLLMWithErrorHandling = async (message: string): Promise<string> => {
+  try {
+    // Your LLM API call here
+    const response = await callYourLLM(message);
+    return response;
+  } catch (error) {
+    console.error('LLM Error:', error);
+    // Re-throw to let the widget handle the error display
+    throw error;
+  }
+};
+```
+
+#### Using Default Mock LLM
+
+If you don't provide an `askLLM` prop, the widget uses a built-in mock LLM that simulates responses for demonstration purposes:
+
+```tsx
+// This will use the built-in mock LLM
+<EloquentChatWidget 
+  projectId="demo-project"
+  theme={{ primary: "#6f42c1" }}
+/>
 ```
 
 ### Theme Object
@@ -218,7 +594,7 @@ interface Theme {
 ```tsx
 interface Message {
   id: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "error";
   text: string;
   ts: number;
 }
@@ -259,6 +635,8 @@ All of my decisions were based on the following major principles:
 1. Fine tune the User Experience & UI
     When it comes to UX / UI I am really good at this. I was a UI designer in the past before become a developer and I constantly do graphic design as a hobby for creating games and such. So User Experience and UI is always something i strive to deliver the best of it on my code. Microinteractions and smooth animations don't make difference alone, but together they can make the User smile and feel great while using the App.
 2. Create behavioral unit tests using vitest and RTL to make sure that any changes do not break the tool funtionality and behavior (eg.: testing if you can send messages and they do appear, if you can open and close the widget, etc.)
+3. Performance Optimization at algorithm level
+    A few modern approaches in react are not that much performatic when it comes to algorithm, like, for instance, spread operator is something really slow in JavaScript, as the language was not designed initially to perform functional programming on it, since its Object Oriented.
 
 ## What could be done to scale this to a enterprise-level widget?
 1. LocalStorage has 5MB of storage, so using it would have a hard cap of more or less approximately 17.000 messages stored at a time, for only one user that might be too much, but the use-cases of this persistance are not clear, anyone can use the way they want. So at some time it would need to be cleared or to create some sort of routine to clear them, but that might not be the user intention. Alternatives are: or using browser's IndexedDB instead that has 50MB of storage. It increases a little bit of maintainability but gives more power and storage to the application. Or you can use the external state control to save and load data on your API (recommended).
