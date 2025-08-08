@@ -628,7 +628,7 @@ All of my decisions were based on the following major principles:
 - Simplicity 
     Why to use a complex state managent library such as Redux or RTK or even Zustand (which 100% would be the choice here) if you don't really need them? Context API does everything that's necessary and it's React built-in. So you don't have prop drilling / unnecessary re-rendering and do have a single source of truth on the app without needing a 3rd party library to depend on. Keep it simple.
 - Lightweight
-    Did you see? This package bundle don't have ANY runtime dependencies (even React is a peerDependency here) and tsup is well configured to make sure the built version of it is the lighest ever possible by minifying the CSS and etc.
+    Did you see? This package bundle weighs 37kb and it does not have ANY runtime dependencies (even React is a peerDependency here) and tsup is well configured to make sure the built version of it is the lighest ever possible by minifying the CSS and etc.
 
 ## What i would have done if i had more time?
 
