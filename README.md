@@ -632,7 +632,7 @@ All of my decisions were based on the following major principles:
 
 ## What i would have done if i had more time?
 
-1. Fine tune the User Experience & UI
+1. Improve the User Experience & UI / Responsiveness
     When it comes to UX / UI I am really good at this. I was a UI designer in the past before become a developer and I constantly do graphic design as a hobby for creating games and such. So User Experience and UI is always something i strive to deliver the best of it on my code. Microinteractions and smooth animations don't make difference alone, but together they can make the User smile and feel great while using the App.
 2. Create behavioral unit tests using vitest and RTL to make sure that any changes do not break the tool funtionality and behavior (eg.: testing if you can send messages and they do appear, if you can open and close the widget, etc.)
 3. Performance Optimization at algorithm level

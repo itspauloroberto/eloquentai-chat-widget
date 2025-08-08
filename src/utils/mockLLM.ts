@@ -1,3 +1,9 @@
+/**
+ * Mock LLM Implementation
+ * 
+ * Provides a simulated LLM experience for demonstration and testing purposes.
+ * Returns random responses from a curated list of professional assistant replies.
+ */
 const cannedReplies = [
     "Sure! I'd be happy to help with that. Could you please provide a bit more detail so I can give you the most accurate information?",
     "Let me look into that for you. In the meantime, if you have any additional context or requirements, feel free to share them.",
@@ -16,9 +22,24 @@ const cannedReplies = [
     "Let me check the documentation and get back to you with a step-by-step guide to resolve your issue."
 ];
 
+/**
+ * Mock LLM Function
+ * 
+ * Simulates an LLM API call with realistic delay and random responses.
+ * Used as fallback when no custom askLLM function is provided.
+ * 
+ * @param {string} _prompt - The user's message (ignored in mock implementation)
+ * @returns {Promise<string>} A random professional response from the canned replies
+ * 
+ * @example
+ * const response = await askLLM("Hello, how are you?");
+ * console.log(response); // Returns one of the predefined responses
+ */
 export async function askLLM(_prompt: string): Promise<string> {
-  await new Promise(r => setTimeout(r, 600)); // Simulate delay
+  // Simulate realistic API delay (600ms)
+  await new Promise(r => setTimeout(r, 600));
 
+  // Return a random response from the curated list
   const reply = cannedReplies[Math.floor(Math.random() * cannedReplies.length)];
   return reply;
 }

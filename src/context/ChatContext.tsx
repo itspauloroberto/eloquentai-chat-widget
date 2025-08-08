@@ -9,13 +9,18 @@ import type { Message, Theme } from "../types";
 import { loadLocalStorage, saveLocalStorage } from "../utils/storage";
 import { askLLM } from "../utils/mockLLM";
 
-// Define the context state interface
+/**
+ * Chat Context State Interface
+ * 
+ * Defines the complete state and actions available through the chat context.
+ * This provides centralized state management for the entire chat widget.
+ */
 interface ChatContextState {
   // Core state
   projectId: string;
   userId?: string;
   messages: Message[];
-  isOpen: boolean | null;
+  isOpen: boolean | null; // null prevents initial animations
   isSending: boolean;
   isOnline: boolean;
   isMaintenanceMode: boolean;
@@ -38,10 +43,33 @@ interface ChatContextState {
   setPersist: (persist: boolean) => void;
 }
 
-// Create the context
+/**
+ * Create the React Context for chat state management
+ * 
+ * @type {React.Context<ChatContextState | undefined>}
+ */
 const ChatContext = createContext<ChatContextState | undefined>(undefined);
 
-// Props for the provider
+/**
+ * Props for the ChatProvider component
+ * 
+ * @interface ChatProviderProps
+ * @property {React.ReactNode} children - Child components to wrap with context
+ * @property {string} projectId - Initial project identifier
+ * @property {string} [userId] - Optional initial user identifier
+ * @property {Theme} [theme] - Optional initial theme configuration
+ * @property {boolean|null} [initialOpen] - Optional initial panel state
+ * @property {boolean} [persist] - Optional localStorage persistence setting
+ * @property {boolean} [maintenance] - Optional maintenance mode setting
+ * @property {boolean} [online] - Optional online status setting
+ * @property {(message: string) => Promise<string>} [askLLM] - Optional custom LLM function
+ * 
+ * External control overrides (hybrid approach):
+ * @property {Message[]} [externalMessages] - External message state override
+ * @property {React.Dispatch<React.SetStateAction<Message[]>>} [externalSetMessages] - External message setter
+ * @property {() => Message[]} [externalLoadMessages] - External message loader
+ * @property {(messages: Message[]) => void} [externalSaveMessages] - External message saver
+ */
 interface ChatProviderProps {
   children: React.ReactNode;
   // Initial configuration
@@ -222,7 +250,21 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
   );
 };
 
-// Custom hook to use the chat context
+/**
+ * Custom React Hook for accessing chat context
+ * 
+ * Provides access to the complete chat state and actions from any component
+ * within the ChatProvider tree. Includes runtime validation to ensure proper usage.
+ * 
+ * @returns {ChatContextState} The complete chat context state and actions
+ * @throws {Error} When used outside of a ChatProvider
+ * 
+ * @example
+ * function MyComponent() {
+ *   const { messages, sendMessage, isOpen } = useChatWidget();
+ *   return <div>Chat has {messages.length} messages</div>;
+ * }
+ */
 export const useChatWidget = () => {
   const context = useContext(ChatContext);
   if (context === undefined) {
@@ -231,5 +273,10 @@ export const useChatWidget = () => {
   return context;
 };
 
-// Export the context for advanced use cases
+/**
+ * Export the raw context for advanced use cases
+ * 
+ * Allows advanced users to access the context directly if needed,
+ * though using the useChatWidget hook is recommended for most cases.
+ */
 export { ChatContext };
